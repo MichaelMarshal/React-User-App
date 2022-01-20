@@ -13,10 +13,11 @@ import BoardUser from "./components/BoardUser";
 import BoardModerator from "./components/BoardModerator";
 import BoardAdmin from "./components/BoardAdmin";
 
-import { logout } from "./actions/auth";
+import {loginOutAction, logout} from "./actions/auth";
 import { clearMessage } from "./actions/message";
 
 import { history } from "./helpers/history";
+import Amplify, {Auth} from "aws-amplify";
 
 const App = () => {
     const [showModeratorBoard, setShowModeratorBoard] = useState(false);
@@ -33,13 +34,21 @@ const App = () => {
 
     useEffect(() => {
         if (currentUser) {
-            setShowModeratorBoard(currentUser.roles.includes("ROLE_MODERATOR"));
-            setShowAdminBoard(currentUser.roles.includes("ROLE_ADMIN"));
+           // setShowModeratorBoard(currentUser.roles.includes("ROLE_MODERATOR"));
+          //  setShowAdminBoard(currentUser.roles.includes("ROLE_ADMIN"));
         }
     }, [currentUser]);
 
+    useEffect(() => {
+        Amplify.configure({
+                region: process.env.REACT_APP_REGION,
+                userPoolId: process.env.REACT_APP_USER_POOL_ID,
+                userPoolWebClientId: process.env.REACT_APP_USER_POOL_WEB_CLIENT_ID,
+        });
+    });
+
     const logOut = () => {
-        dispatch(logout());
+        dispatch(loginOutAction());
     };
 
     return (

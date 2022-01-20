@@ -1,12 +1,12 @@
 import React, { useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Navigate } from 'react-router-dom';
-
 import Form from "react-validation/build/form";
 import Input from "react-validation/build/input";
 import CheckButton from "react-validation/build/button";
 
-import { login } from "../actions/auth";
+import { loginAction} from "../actions/auth";
+import {login} from "../services/auth.service";
 
 const required = (value) => {
     if (!value) {
@@ -42,21 +42,47 @@ const Login = (props) => {
     };
 
     const handleLogin = (e) => {
+
         e.preventDefault();
 
-        setLoading(true);
+         setLoading(true);
 
         form.current.validateAll();
 
         if (checkBtn.current.context._errors.length === 0) {
-            dispatch(login(username, password))
-                .then(() => {
+            let user = {
+                username,
+                password
+            }
+            login(user).then( (response) => {
+                console.log('i got it here : ', response);
+                setLoading(false);
+                localStorage.setItem('accessToken', response.signInUserSession.accessToken.jwtToken);
+                localStorage.setItem('idToken', response.signInUserSession.idToken.jwtToken);
+                localStorage.setItem('refreshToken', response.signInUserSession.refreshToken.token);
+                localStorage.setItem('username', response.username);
+                console.log('attributes : ', response.attributes);
+                localStorage.setItem('user', JSON.stringify(response.attributes));
+               /* history.push("/profile");
+                window.location.reload();*/
+                window.location.href = '/profile';
+            }).catch((err) => {
+                console.log('error occured : ', err);
+                setLoading(false);
+            });
+         //   dispatch(loginAction(user));
+
+            console.log('it finished');
+          //  history.push("/profile");
+           // props.history.push("/profile");
+            // window.location.reload();
+                /*.then(() => {
                     props.history.push("/profile");
                     window.location.reload();
                 })
                 .catch(() => {
                     setLoading(false);
-                });
+                });*/
         } else {
             setLoading(false);
         }

@@ -5,8 +5,9 @@ import Form from "react-validation/build/form";
 import Input from "react-validation/build/input";
 import CheckButton from "react-validation/build/button";
 import { isEmail } from "validator";
+import { connect } from 'react-redux';
 
-import { register } from "../actions/auth";
+import {register, registerAction} from "../actions/auth";
 
 const required = (value) => {
     if (!value) {
@@ -80,16 +81,23 @@ const Register = () => {
 
         setSuccessful(false);
 
-        form.current.validateAll();
+       // form.current.validateAll();
 
         if (checkBtn.current.context._errors.length === 0) {
-            dispatch(register(username, email, password))
+            const user = {
+                username,
+                email,
+                password
+            }
+            dispatch(registerAction(user));
+          //  this.props.dispatch(register(username, email, password));
+           /* dispatch(register(username, email, password))
                 .then(() => {
                     setSuccessful(true);
                 })
                 .catch(() => {
                     setSuccessful(false);
-                });
+                });*/
         }
     };
 
@@ -161,4 +169,8 @@ const Register = () => {
     );
 };
 
-export default Register;
+const mapStateToProps = (response) => ({
+    response
+});
+
+export default connect(mapStateToProps)(Register);

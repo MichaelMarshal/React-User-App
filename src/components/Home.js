@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from "react";
 
 import UserService from "../services/user.service";
+import {useSelector} from "react-redux";
+import {Navigate} from "react-router-dom";
 
 const Home = () => {
     const [content, setContent] = useState("");
+    const { user: currentUser } = useSelector((state) => state.auth);
 
     useEffect(() => {
+
         UserService.getPublicContent().then(
             (response) => {
                 setContent(response.data);
@@ -20,6 +24,9 @@ const Home = () => {
             }
         );
     }, []);
+    if (!currentUser) {
+        return <Navigate to="/login" />;
+    }
 
     return (
         <div className="container">
