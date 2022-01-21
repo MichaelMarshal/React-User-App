@@ -71,8 +71,38 @@ const logout = () => {
     localStorage.clear();
 }
 
+export const changePassword = async (password, newPassword) => {
+    const currentUser = await Auth.currentAuthenticatedUser();
+    await Auth.changePassword(currentUser, password, newPassword).then((response) => {
+        console.log('password change successful : ', response);
+    }).catch((err) => {
+        console.log('error when changing password : ', err);
+    });
+}
+
+const forgotPassword = async () => {
+    const currentUser = await Auth.currentAuthenticatedUser();
+    Auth.forgotPassword(currentUser.USERNAME).then((response) => {
+        console.log('forgot password was successfull ', response);
+    }).catch((err) => {
+        console.log('forgot password is unsuccessful ', err);
+    });
+}
+
+const confirmForgotPassword = async (otp, newPassword) => {
+    const currentUser = await Auth.currentAuthenticatedUser();
+    Auth.forgotPasswordSubmit(currentUser.USERNAME, otp, newPassword).then((response) => {
+        console.log('forgot password confirmation step complete : ', response);
+    }).catch((err) => {
+        console.log('forgot password confirmation step failure : ', err);
+    });
+}
+
 export default {
     register,
     login,
-    logout
+    logout,
+    changePassword,
+    forgotPassword,
+    confirmForgotPassword
 }

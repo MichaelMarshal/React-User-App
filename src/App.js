@@ -9,9 +9,7 @@ import Login from "./components/Login";
 import Register from "./components/Register";
 import Home from "./components/Home";
 import Profile from "./components/Profile";
-import BoardUser from "./components/BoardUser";
-import BoardModerator from "./components/BoardModerator";
-import BoardAdmin from "./components/BoardAdmin";
+import User from "./components/User";
 
 import {loginOutAction, logout} from "./actions/auth";
 import { clearMessage } from "./actions/message";
@@ -83,8 +81,8 @@ const App = () => {
 
                         {currentUser && (
                             <li className="nav-item">
-                                <Link to="/user" className="nav-link">
-                                    User
+                                <Link to="/profile" className="nav-link">
+                                    Profile
                                 </Link>
                             </li>
                         )}
@@ -127,9 +125,7 @@ const App = () => {
                             <Route exact path='/login' element={ <Login />} />
                             <Route exact path='/register' element={ <Register />} />
                             <Route exact path="/profile" element={ <Profile />} />
-                            <Route path='/user' element={ <BoardUser />} />
-                            <Route path='/mod' element={ <BoardModerator />} />
-                            <Route path='/admin' element={ <BoardAdmin />} />
+                            <Route path='/boardUser' element={ <User />} />
                     </Routes>
                 </div>
             </div>

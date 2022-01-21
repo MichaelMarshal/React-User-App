@@ -68,3 +68,11 @@ label {
   -webkit-border-radius: 50%;
   border-radius: 50%;
 }
+.align-left {
+  margin: 0;
+}
+.submit-button {
+  display: flex;
+  justify-content: center;
+  padding: 10px;
+}
