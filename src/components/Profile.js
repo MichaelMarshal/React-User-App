@@ -3,11 +3,9 @@ import { Navigate } from 'react-router-dom';
 import { useSelector } from "react-redux";
 import Form from "react-validation/build/form";
 import Input from "react-validation/build/input";
-import CheckButton from "react-validation/build/button";
 import Popup from "./Popup";
 import {changePassword} from "../services/auth.service";
-import UserService from "../services/user.service";
-import {fullWidth} from "validator/es/lib/isFullWidth";
+import UserService, {createUserQuote} from "../services/user.service";
 
 const Profile = () => {
     useEffect(() => {
@@ -18,9 +16,6 @@ const Profile = () => {
             },
             (error) => {
                 console.log('error occured : ', error);
-                const _content =
-                    (error.response && error.response.data) ||
-                    error.toString();
             }
         );
     }, []);
@@ -28,12 +23,11 @@ const Profile = () => {
     const checkBtn = useRef();
     const [data, setData] = useState([]);
     const [oldPassword, setOldPassword] = useState("");
-    const [quote, onChangeQuote] = useState("");
-    const [imgURL, onChangeImgURL] = useState("");
+    const [quote, setQuote] = useState("");
+    const [imgURL, setImgURL] = useState("");
     const [isOpen, setIsOpen] = useState(false);
     const [isAddOpen, setIsAddOpen] = useState(false);
     const [newPassword, setNewPassword] = useState("");
-    const [loading, setLoading] = useState(false);
     const onChangeOldPassword = (e) => {
         const OldPassword = e.target.value;
         setOldPassword(OldPassword);
@@ -42,6 +36,15 @@ const Profile = () => {
     const onChangeNewPassword = (e) => {
         const NewPassword = e.target.value;
         setNewPassword(NewPassword);
+    };
+    const onChangeQuote = (e) => {
+        const quote = e.target.value;
+        setQuote(quote);
+    };
+
+    const onChangeImgURL = (e) => {
+        const img = e.target.value;
+        setImgURL(img);
     };
     const required = (value) => {
         if (!value) {
@@ -55,6 +58,7 @@ const Profile = () => {
     const { user: currentUser } = useSelector((state) => state.auth);
     const accessToken = localStorage.getItem('idToken');
     const userObj = JSON.parse(currentUser);
+    const username = localStorage.getItem('username');
     console.log('currentUser : ', currentUser);
     if (!currentUser) {
         return <Navigate to="/login" />;
@@ -73,17 +77,22 @@ const Profile = () => {
         }
 
     }
-    const handleQuoteAddingChange = (e) => {
+    const handleQuoteAddingChange = async (e) => {
         e.preventDefault();
         form.current.validateAll();
-        if (checkBtn.current.context._errors.length === 0) {
-            changePassword(oldPassword, newPassword).then( (response) => {
-               console.log('password changed successfully : ', response);
-               togglePopup();
-            }).catch( (err) => {
-                console.log('failure in password change : ', err);
+            const body = {
+                id: userObj.sub,
+                name: username,
+                quote: quote,
+                image: imgURL
+            }
+            createUserQuote(body).then((response) => {
+                console.log('quote added successfully : ', response);
+                createRecord();
+            }).catch((err) => {
+                console.log('failure in adding quote: ', err);
             });
-        }
+
 
     }
 
@@ -139,10 +148,7 @@ const Profile = () => {
                                         </div>
 
                                         <div className="form-group submit-button">
-                                            <button className="btn btn-primary btn-block" disabled={loading}>
-                                                {loading && (
-                                                    <span className="spinner-border spinner-border-sm"></span>
-                                                )}
+                                            <button className="btn btn-primary btn-block">
                                                 <span>Reset</span>
                                             </button>
                                         </div>
@@ -210,10 +216,7 @@ const Profile = () => {
                                         </div>
 
                                         <div className="form-group submit-button">
-                                            <button className="btn btn-primary btn-block" disabled={loading}>
-                                                {loading && (
-                                                    <span className="spinner-border spinner-border-sm"></span>
-                                                )}
+                                            <button className="btn btn-primary btn-block">
                                                 <span>Submit</span>
                                             </button>
                                         </div>

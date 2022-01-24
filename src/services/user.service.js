@@ -11,7 +11,12 @@ const getUsers = () => {
     return axios.get(API_URL, {headers: authHeader() });
 }
 
+export const createUserQuote = (body) => {
+    return axios.post(API_URL,body,{headers: authHeader()});
+}
+
 export default  {
     getPublicContent,
-    getUsers
+    getUsers,
+    createUserQuote
 }
