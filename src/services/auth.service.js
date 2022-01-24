@@ -18,12 +18,12 @@ var userPool;
 export const register = (user) => {
     var registerRequesBody = {
         Name: 'email',
-        Value: user.user.email
+        Value: user.email
     };
 
   //  var attributeEmail = new AmazonCognitoIdentity.CognitoUserAttribute(registerRequesBody);
     console.log(' details : ', user );
-      return Auth.signUp( {username: user.user.username, password: user.user.password, attributes: {email: user.user.email}}).then( (data) => {
+      return Auth.signUp( {username: user.username, password: user.password, attributes: {email: user.email}}).then( (data) => {
         console.log('signed up : ', data);
         return data;
     }).catch((err) => {
@@ -80,18 +80,17 @@ export const changePassword = async (password, newPassword) => {
     });
 }
 
-const forgotPassword = async () => {
-    const currentUser = await Auth.currentAuthenticatedUser();
-    Auth.forgotPassword(currentUser.USERNAME).then((response) => {
+export const forgotPassword = async (username) => {
+    console.log('username : ', username);
+    Auth.forgotPassword(username).then((response) => {
         console.log('forgot password was successfull ', response);
     }).catch((err) => {
         console.log('forgot password is unsuccessful ', err);
     });
 }
 
-const confirmForgotPassword = async (otp, newPassword) => {
-    const currentUser = await Auth.currentAuthenticatedUser();
-    Auth.forgotPasswordSubmit(currentUser.USERNAME, otp, newPassword).then((response) => {
+export const confirmForgotPassword = async (username, otp, newPassword) => {
+    Auth.forgotPasswordSubmit(username, otp, newPassword).then((response) => {
         console.log('forgot password confirmation step complete : ', response);
     }).catch((err) => {
         console.log('forgot password confirmation step failure : ', err);

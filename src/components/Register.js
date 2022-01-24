@@ -7,7 +7,8 @@ import CheckButton from "react-validation/build/button";
 import { isEmail } from "validator";
 import { connect } from 'react-redux';
 
-import {register, registerAction} from "../actions/auth";
+import {register} from "../services/auth.service";
+import { registerAction} from "../actions/auth";
 
 const required = (value) => {
     if (!value) {
@@ -81,7 +82,7 @@ const Register = () => {
 
         setSuccessful(false);
 
-       // form.current.validateAll();
+        // form.current.validateAll();
 
         if (checkBtn.current.context._errors.length === 0) {
             const user = {
@@ -89,15 +90,22 @@ const Register = () => {
                 email,
                 password
             }
-            dispatch(registerAction(user));
-          //  this.props.dispatch(register(username, email, password));
-           /* dispatch(register(username, email, password))
-                .then(() => {
-                    setSuccessful(true);
-                })
-                .catch(() => {
-                    setSuccessful(false);
-                });*/
+         //   await dispatch(registerAction(user));
+            register(user).then( (response) => {
+               console.log('user created successfully : ', response);
+                window.location.href = '/login';
+            }).catch((error) => {
+                console.log('error occured in api : ', error);
+            });
+
+            //  this.props.dispatch(register(username, email, password));
+            /* dispatch(register(username, email, password))
+                 .then(() => {
+                     setSuccessful(true);
+                 })
+                 .catch(() => {
+                     setSuccessful(false);
+                 });*/
         }
     };
 

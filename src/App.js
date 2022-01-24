@@ -16,6 +16,7 @@ import { clearMessage } from "./actions/message";
 
 import { history } from "./helpers/history";
 import Amplify, {Auth} from "aws-amplify";
+import ForgotPassword from "./components/ForgotPassword";
 
 const App = () => {
     const [showModeratorBoard, setShowModeratorBoard] = useState(false);
@@ -126,6 +127,7 @@ const App = () => {
                             <Route exact path='/register' element={ <Register />} />
                             <Route exact path="/profile" element={ <Profile />} />
                             <Route path='/boardUser' element={ <User />} />
+                            <Route path='/forgotPassword' element={ <ForgotPassword />} />
                     </Routes>
                 </div>
             </div>

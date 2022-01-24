@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, {useState, useRef, useEffect} from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Navigate } from 'react-router-dom';
 import Form from "react-validation/build/form";
@@ -6,7 +6,8 @@ import Input from "react-validation/build/input";
 import CheckButton from "react-validation/build/button";
 
 import { loginAction} from "../actions/auth";
-import {login, forgotPassword} from "../services/auth.service";
+import {login, forgotPassword, confirmForgotPassword} from "../services/auth.service";
+import UserService from "../services/user.service";
 
 const required = (value) => {
     if (!value) {
@@ -18,12 +19,14 @@ const required = (value) => {
     }
 };
 
-const Login = (props) => {
+const ForgotPassword = (props) => {
     const form = useRef();
     const checkBtn = useRef();
 
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const [initialized, setInitialized] = useState(false);
+    const [otp, setOTP] = useState(0);
     const [loading, setLoading] = useState(false);
 
     const { isLoggedIn } = useSelector(state => state.auth);
@@ -41,14 +44,32 @@ const Login = (props) => {
         setPassword(password);
     };
 
-    const handleForgotPassword = (e) => {
+    const onChangeOtp = (e) => {
+        const otp = e.target.value;
+        setOTP(otp);
+    };
+
+    const handleForgotPasswordInitialization = (e) => {
 
         e.preventDefault();
 
-        forgotPassword().then( (response) => {
+        forgotPassword(username).then( (response) => {
             console.log('forgot Password initiated');
+            setInitialized(true);
         }).catch((err) => {
             console.log('forgot password initiation failed');
+        });
+    }
+
+    const handleResetPassword = (e) => {
+
+        e.preventDefault();
+
+        confirmForgotPassword(username, otp, password).then( (response) => {
+            console.log('confirmForgotPassword  initiated');
+            window.location.href = '/login';
+        }).catch((err) => {
+            console.log('confirmForgotPassword  initiation failed');
         });
     }
 
@@ -56,7 +77,7 @@ const Login = (props) => {
 
         e.preventDefault();
 
-         setLoading(true);
+        setLoading(true);
 
         form.current.validateAll();
 
@@ -74,26 +95,26 @@ const Login = (props) => {
                 localStorage.setItem('username', response.username);
                 console.log('attributes : ', response.attributes);
                 localStorage.setItem('user', JSON.stringify(response.attributes));
-               /* history.push("/profile");
-                window.location.reload();*/
+                /* history.push("/profile");
+                 window.location.reload();*/
                 window.location.href = '/profile';
             }).catch((err) => {
                 console.log('error occured : ', err);
                 setLoading(false);
             });
-         //   dispatch(loginAction(user));
+            //   dispatch(loginAction(user));
 
             console.log('it finished');
-          //  history.push("/profile");
-           // props.history.push("/profile");
+            //  history.push("/profile");
+            // props.history.push("/profile");
             // window.location.reload();
-                /*.then(() => {
-                    props.history.push("/profile");
-                    window.location.reload();
-                })
-                .catch(() => {
-                    setLoading(false);
-                });*/
+            /*.then(() => {
+                props.history.push("/profile");
+                window.location.reload();
+            })
+            .catch(() => {
+                setLoading(false);
+            });*/
         } else {
             setLoading(false);
         }
@@ -112,7 +133,7 @@ const Login = (props) => {
                     className="profile-img-card"
                 />
 
-                <Form onSubmit={handleLogin} ref={form}>
+                <Form onSubmit={handleForgotPasswordInitialization} ref={form}>
                     <div className="form-group">
                         <label htmlFor="username">Username</label>
                         <Input
@@ -124,9 +145,21 @@ const Login = (props) => {
                             validations={[required]}
                         />
                     </div>
-
-                    <div className="form-group">
-                        <label htmlFor="password">Password</label>
+                    {initialized && (
+                    <div className="form-group" >
+                        <label htmlFor="otp">OTP</label>
+                        <Input
+                            type="text"
+                            className="form-control"
+                            name="otp"
+                            value={otp}
+                            onChange={onChangeOtp}
+                            validations={[required]}
+                        />
+                    </div>)}
+                    {initialized && (
+                    <div className="form-group" >
+                        <label htmlFor="password">New Password</label>
                         <Input
                             type="password"
                             className="form-control"
@@ -136,16 +169,27 @@ const Login = (props) => {
                             validations={[required]}
                         />
                     </div>
-                    <a href='/forgotPassword'>Forgot Password?</a>
+                    )}
+                    {!initialized && (
                     <div className="form-group submit-button">
                         <button className="btn btn-primary btn-block" disabled={loading}>
                             {loading && (
                                 <span className="spinner-border spinner-border-sm"></span>
                             )}
-                            <span>Login</span>
+                            <span>Submit Forgot Password</span>
                         </button>
                     </div>
-
+                        )}
+                    {initialized && (
+                    <div className="form-group submit-button">
+                        <button className="btn btn-primary btn-block" onClick={handleResetPassword} disabled={loading}>
+                            {loading && (
+                                <span className="spinner-border spinner-border-sm"></span>
+                            )}
+                            <span>Reset Password</span>
+                        </button>
+                    </div>
+                        )}
                     {message && (
                         <div className="form-group">
                             <div className="alert alert-danger" role="alert">
@@ -160,4 +204,4 @@ const Login = (props) => {
     );
 };
 
-export default Login;
+export default ForgotPassword;
