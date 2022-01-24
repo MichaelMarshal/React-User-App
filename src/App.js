@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 
@@ -11,16 +11,14 @@ import Home from "./components/Home";
 import Profile from "./components/Profile";
 import User from "./components/User";
 
-import {loginOutAction, logout} from "./actions/auth";
+import {loginOutAction} from "./actions/auth";
 import { clearMessage } from "./actions/message";
 
 import { history } from "./helpers/history";
-import Amplify, {Auth} from "aws-amplify";
+import Amplify from "aws-amplify";
 import ForgotPassword from "./components/ForgotPassword";
 
 const App = () => {
-    const [showModeratorBoard, setShowModeratorBoard] = useState(false);
-    const [showAdminBoard, setShowAdminBoard] = useState(false);
 
     const { user: currentUser } = useSelector((state) => state.auth);
     const dispatch = useDispatch();
@@ -33,8 +31,7 @@ const App = () => {
 
     useEffect(() => {
         if (currentUser) {
-           // setShowModeratorBoard(currentUser.roles.includes("ROLE_MODERATOR"));
-          //  setShowAdminBoard(currentUser.roles.includes("ROLE_ADMIN"));
+            console.log('current Active User : ', currentUser);
         }
     }, [currentUser]);
 
@@ -54,31 +51,10 @@ const App = () => {
         <Router history={history}>
             <div>
                 <nav className="navbar navbar-expand navbar-dark bg-dark">
-                    <Link to="/home" className="navbar-brand">
+                    <Link to="/profile" className="navbar-brand">
                         User App
                     </Link>
                     <div className="navbar-nav mr-auto">
-                        <li className="nav-item">
-                            <Link to="/home" className="nav-link">
-                                Home
-                            </Link>
-                        </li>
-
-                        {showModeratorBoard && (
-                            <li className="nav-item">
-                                <Link to="/mod" className="nav-link">
-                                    Moderator Board
-                                </Link>
-                            </li>
-                        )}
-
-                        {showAdminBoard && (
-                            <li className="nav-item">
-                                <Link to="/admin" className="nav-link">
-                                    Admin Board
-                                </Link>
-                            </li>
-                        )}
 
                         {currentUser && (
                             <li className="nav-item">

@@ -2,7 +2,6 @@ import { put, call } from 'redux-saga/effects';
 import { register, login } from '../services/auth.service';
 
 import * as types from "../actions/types";
-import {LOGOUT} from "../actions/types";
 import {logout} from "../actions/auth";
 
 export function* registerSaga(payload) {

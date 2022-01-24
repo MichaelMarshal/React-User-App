@@ -1,14 +1,12 @@
 import React, { useState, useRef } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { connect, useSelector } from "react-redux";
 
 import Form from "react-validation/build/form";
 import Input from "react-validation/build/input";
 import CheckButton from "react-validation/build/button";
 import { isEmail } from "validator";
-import { connect } from 'react-redux';
 
 import {register} from "../services/auth.service";
-import { registerAction} from "../actions/auth";
 
 const required = (value) => {
     if (!value) {
@@ -60,21 +58,20 @@ const Register = () => {
     const [successful, setSuccessful] = useState(false);
 
     const { message } = useSelector(state => state.message);
-    const dispatch = useDispatch();
 
     const onChangeUsername = (e) => {
-        const username = e.target.value;
-        setUsername(username);
+        const usernameChanged = e.target.value;
+        setUsername(usernameChanged);
     };
 
     const onChangeEmail = (e) => {
-        const email = e.target.value;
-        setEmail(email);
+        const emailChanged = e.target.value;
+        setEmail(emailChanged);
     };
 
     const onChangePassword = (e) => {
-        const password = e.target.value;
-        setPassword(password);
+        const passwordChanged = e.target.value;
+        setPassword(passwordChanged);
     };
 
     const handleRegister = (e) => {
@@ -82,30 +79,18 @@ const Register = () => {
 
         setSuccessful(false);
 
-        // form.current.validateAll();
-
         if (checkBtn.current.context._errors.length === 0) {
             const user = {
                 username,
                 email,
                 password
             }
-         //   await dispatch(registerAction(user));
             register(user).then( (response) => {
                console.log('user created successfully : ', response);
                 window.location.href = '/login';
             }).catch((error) => {
                 console.log('error occured in api : ', error);
             });
-
-            //  this.props.dispatch(register(username, email, password));
-            /* dispatch(register(username, email, password))
-                 .then(() => {
-                     setSuccessful(true);
-                 })
-                 .catch(() => {
-                     setSuccessful(false);
-                 });*/
         }
     };
 

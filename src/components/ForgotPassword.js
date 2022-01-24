@@ -1,13 +1,11 @@
-import React, {useState, useRef, useEffect} from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React, {useState, useRef } from "react";
+import { useSelector } from "react-redux";
 import { Navigate } from 'react-router-dom';
 import Form from "react-validation/build/form";
 import Input from "react-validation/build/input";
 import CheckButton from "react-validation/build/button";
 
-import { loginAction} from "../actions/auth";
-import {login, forgotPassword, confirmForgotPassword} from "../services/auth.service";
-import UserService from "../services/user.service";
+import { forgotPassword, confirmForgotPassword} from "../services/auth.service";
 
 const required = (value) => {
     if (!value) {
@@ -32,21 +30,19 @@ const ForgotPassword = (props) => {
     const { isLoggedIn } = useSelector(state => state.auth);
     const { message } = useSelector(state => state.message);
 
-    const dispatch = useDispatch();
-
     const onChangeUsername = (e) => {
-        const username = e.target.value;
-        setUsername(username);
+        const usernameChanged = e.target.value;
+        setUsername(usernameChanged);
     };
 
     const onChangePassword = (e) => {
-        const password = e.target.value;
-        setPassword(password);
+        const passwordChanged = e.target.value;
+        setPassword(passwordChanged);
     };
 
     const onChangeOtp = (e) => {
-        const otp = e.target.value;
-        setOTP(otp);
+        const otpChanged = e.target.value;
+        setOTP(otpChanged);
     };
 
     const handleForgotPasswordInitialization = (e) => {
@@ -73,52 +69,6 @@ const ForgotPassword = (props) => {
         });
     }
 
-    const handleLogin = (e) => {
-
-        e.preventDefault();
-
-        setLoading(true);
-
-        form.current.validateAll();
-
-        if (checkBtn.current.context._errors.length === 0) {
-            let user = {
-                username,
-                password
-            }
-            login(user).then( (response) => {
-                console.log('i got it here : ', response);
-                setLoading(false);
-                localStorage.setItem('accessToken', response.signInUserSession.accessToken.jwtToken);
-                localStorage.setItem('idToken', response.signInUserSession.idToken.jwtToken);
-                localStorage.setItem('refreshToken', response.signInUserSession.refreshToken.token);
-                localStorage.setItem('username', response.username);
-                console.log('attributes : ', response.attributes);
-                localStorage.setItem('user', JSON.stringify(response.attributes));
-                /* history.push("/profile");
-                 window.location.reload();*/
-                window.location.href = '/profile';
-            }).catch((err) => {
-                console.log('error occured : ', err);
-                setLoading(false);
-            });
-            //   dispatch(loginAction(user));
-
-            console.log('it finished');
-            //  history.push("/profile");
-            // props.history.push("/profile");
-            // window.location.reload();
-            /*.then(() => {
-                props.history.push("/profile");
-                window.location.reload();
-            })
-            .catch(() => {
-                setLoading(false);
-            });*/
-        } else {
-            setLoading(false);
-        }
-    };
 
     if (isLoggedIn) {
         return <Navigate to="/profile" />;

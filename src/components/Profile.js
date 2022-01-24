@@ -38,8 +38,8 @@ const Profile = () => {
         setNewPassword(NewPassword);
     };
     const onChangeQuote = (e) => {
-        const quote = e.target.value;
-        setQuote(quote);
+        const quoteChanged = e.target.value;
+        setQuote(quoteChanged);
     };
 
     const onChangeImgURL = (e) => {

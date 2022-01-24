@@ -1,12 +1,11 @@
 import React, { useState, useRef } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { Navigate } from 'react-router-dom';
 import Form from "react-validation/build/form";
 import Input from "react-validation/build/input";
 import CheckButton from "react-validation/build/button";
 
-import { loginAction} from "../actions/auth";
-import {login, forgotPassword} from "../services/auth.service";
+import {login} from "../services/auth.service";
 
 const required = (value) => {
     if (!value) {
@@ -29,28 +28,15 @@ const Login = (props) => {
     const { isLoggedIn } = useSelector(state => state.auth);
     const { message } = useSelector(state => state.message);
 
-    const dispatch = useDispatch();
-
     const onChangeUsername = (e) => {
-        const username = e.target.value;
-        setUsername(username);
+        const usernameChanged = e.target.value;
+        setUsername(usernameChanged);
     };
 
     const onChangePassword = (e) => {
-        const password = e.target.value;
-        setPassword(password);
+        const passwordChanged = e.target.value;
+        setPassword(passwordChanged);
     };
-
-    const handleForgotPassword = (e) => {
-
-        e.preventDefault();
-
-        forgotPassword().then( (response) => {
-            console.log('forgot Password initiated');
-        }).catch((err) => {
-            console.log('forgot password initiation failed');
-        });
-    }
 
     const handleLogin = (e) => {
 
@@ -74,26 +60,14 @@ const Login = (props) => {
                 localStorage.setItem('username', response.username);
                 console.log('attributes : ', response.attributes);
                 localStorage.setItem('user', JSON.stringify(response.attributes));
-               /* history.push("/profile");
-                window.location.reload();*/
                 window.location.href = '/profile';
             }).catch((err) => {
                 console.log('error occured : ', err);
                 setLoading(false);
             });
-         //   dispatch(loginAction(user));
 
             console.log('it finished');
-          //  history.push("/profile");
-           // props.history.push("/profile");
-            // window.location.reload();
-                /*.then(() => {
-                    props.history.push("/profile");
-                    window.location.reload();
-                })
-                .catch(() => {
-                    setLoading(false);
-                });*/
+
         } else {
             setLoading(false);
         }
